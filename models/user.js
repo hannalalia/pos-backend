@@ -9,8 +9,9 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
+    static associate({Sales}) {
       // define association here
+      this.hasMany(Sales,{foreignKey:'user_id'});
     }
     //hides the id attribute on response
     toJSON(){
@@ -18,7 +19,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   User.init({
-    _id: DataTypes.UUID,
+    _id: {
+      type:DataTypes.UUID,
+      allowNull:false
+    },
     username:{
       type:DataTypes.STRING,
       allowNull:false,

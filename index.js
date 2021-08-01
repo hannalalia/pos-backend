@@ -3,7 +3,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const {requireAuth} = require('./middleware/authMiddleware.js');
-const {sequelize, User} = require('./models');
+const {sequelize, User, Sales} = require('./models');
 const { v4 } = require('uuid')
 
 const app = express();
@@ -91,8 +91,58 @@ app.delete('/users/:id',async (req,res)=>{
     }catch(err){
         console.log(err);
         return res.status(400).json({error:"Something went wrong."})
+    }  
+});
+app.get('/sales',async(req,res)=>{
+    try{
+        const sales = await Sales.findAll();
+        return res.status(200).json(sales);
+    }catch(err){
+        return res.status(400).json({error:"Something went wrong."});
     }
-    
+})
+app.get('/sales/:id',async(req,res)=>{
+    const id = req.params.id;
+    try{
+        const sales = await Sales.findOne({
+            where:{
+                transaction_id:id
+            }
+        });
+        return res.status(200).json(sales);
+    }catch(err){
+        return res.status(400).json({error:"Something went wrong."});
+    }
+});
+
+app.post('/sales',async(req,res)=>{
+    const {transaction_datetime,transaction_total_price} = req.body;
+    const transaction_id = v4();
+    try{
+        const sales = await Sales.create({
+            transaction_id,
+            transaction_datetime,
+            transaction_total_price
+        })
+        return res.status(200).json(sales)
+
+    }catch(err){
+        res.status(400).json({error:"Something went wrong."});
+    }
+})
+
+app.delete('/sales/:id',async(req,res)=>{
+    const id = req.params.id;
+    try{
+        await User.destroy({
+            where:{
+                transaction_id:id
+            }
+        });
+        return res.status(200).json({message:"Sales transaction successfuly deleted."})
+    }catch(err){
+        return res.status(400).json({error:"Something went wrong."})
+    }
 })
 
 app.listen(port, async ()=>{
@@ -100,7 +150,7 @@ app.listen(port, async ()=>{
     await sequelize.authenticate().then(()=>{
         console.log('Database Connected.')
     }).catch(err=>{
-        console.log('Database connection failed.')
+        console.log('Database connection failed: ',err)
     })
 })
 
