@@ -49,6 +49,20 @@ app.get('/users',async (req,res)=>{
     }
     
 })
+app.get('/users/:id',async (req,res)=>{
+    const _id = req.params.id;
+    try{
+        const users = await User.findOne({
+            where: { _id }
+        });
+        return res.status(200).json(users);
+    }catch(err){
+        console.log(err);
+        return res.status(400).json({error:"Something went wrong."})
+    }
+    
+})
+
 app.post('/users',async(req,res)=>{
     const {username, email, password,firstName,lastName} = req.body;
     const _id = v4();
@@ -66,6 +80,19 @@ app.post('/users',async(req,res)=>{
         console.log(err);
         return res.status(400).json(err);
     }
+})
+app.delete('/users/:id',async (req,res)=>{
+    const _id = req.params.id;
+    try{
+        await User.destroy({
+            where: { _id }
+        });
+        return res.status(200).json({message:"User deleted successfuly."});
+    }catch(err){
+        console.log(err);
+        return res.status(400).json({error:"Something went wrong."})
+    }
+    
 })
 
 app.listen(port, async ()=>{
