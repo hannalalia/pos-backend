@@ -16,7 +16,7 @@ const createToken = (username,password)=>{
 app.use(cors())
 app.use(cookieParser());
 //routes
-app.get('/',(req,res)=>{
+app.get('/',requireAuth,(req,res)=>{
     res.send('You are logged in.')
 })
 app.get('/signup',(req,res)=>{
@@ -24,8 +24,10 @@ app.get('/signup',(req,res)=>{
     res.cookie('auth',token);
     res.json(token);
 });
-app.get('/login',requireAuth,(req,res)=>{
-    res.redirect('/')
+app.get('/login',(req,res)=>{
+    const token = createToken('hannalalia','test123')
+    res.cookie('auth',token);
+    res.send('logging in')
 });
 
 app.listen(port, ()=>{
