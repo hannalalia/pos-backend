@@ -29,6 +29,10 @@ app.get('/login',(req,res)=>{
     res.cookie('auth',token);
     res.send('logging in')
 });
+app.get('/logout',(req,res)=>{
+    res.cookie('auth','',{maxAge:1});
+    res.send('logged out')
+});
 
 app.listen(port, ()=>{
     console.log(`Listening on localhost:${port}`)
