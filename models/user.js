@@ -12,10 +12,25 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
+    //hides the id attribute on response
+    toJSON(){
+      return {...this.get(),id:undefined}
+    }
   };
   User.init({
-    username: DataTypes.STRING,
-    email: DataTypes.STRING,
+    _id: DataTypes.UUID,
+    username:{
+      type:DataTypes.STRING,
+      allowNull:false,
+      unique:true,
+      // isAlphanumeric: true
+    },
+    email:{
+      type:DataTypes.STRING,
+      allowNull:false,
+      unique:true,
+      isEmail: true, 
+    },
     password: DataTypes.STRING,
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING
